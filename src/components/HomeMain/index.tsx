@@ -4,11 +4,12 @@ import api from "../../api";
 import { Contact, HomeMainStyled } from "./styles";
 
 interface IContact {
+  id: string;
   name: string;
   email: string;
   phone: string;
   registry_date: string;
-  is_active: boolean;
+  isActive: boolean;
 }
 
 const HomeMain = () => {
@@ -16,17 +17,16 @@ const HomeMain = () => {
   const [contacts, setContacts] = useState<Array<IContact>>();
   useEffect(() => {
     let token = localStorage.getItem("clientToken");
-    console.log(token);
+
     api
       .get("/contact", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
         setContacts(res.data);
-        console.log(contacts);
       })
       .catch((err) => {
         console.log(err);
       });
-  });
+  }, []);
   const [token] = useState(window.localStorage.getItem("clientToken"));
 
   useEffect(() => {
@@ -36,12 +36,20 @@ const HomeMain = () => {
     <HomeMainStyled>
       {contacts?.map((contact) => {
         return (
-          <Contact>
+          <Contact key={contact.id}>
             <p>{contact.name}</p>
             <p>{contact.email}</p>
             <p>{contact.phone}</p>
             <p>{contact.registry_date}</p>
-            <p>{contact.is_active}</p>
+            <p>{contact.isActive ? "ATIVO" : "INATIVO"}</p>
+            <button
+              onClick={() => {
+                navigate("/editContact");
+                localStorage.setItem("contactEmail", contact.email);
+              }}
+            >
+              Editar
+            </button>
           </Contact>
         );
       })}

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { FieldValues, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import api from "../../api";
 
 const FormLogin = () => {
@@ -28,14 +28,37 @@ const FormLogin = () => {
       .post("/client/login", data)
       .then((res) => {
         localStorage.setItem("clientToken", res.data.token);
+        toast.success("Sucesso", {
+          className: "success-toast",
+          draggable: true,
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          progress: undefined,
+        });
         navigate("home");
       })
       .catch((err) => {
-        console.log(err);
+        if (err) {
+          toast.error("Erro", {
+            className: "error-toast",
+            draggable: true,
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            progress: undefined,
+          });
+          console.log(err);
+        }
       });
   };
   return (
     <MainLogin>
+      <ToastContainer />
       <form onSubmit={handleSubmit(onSubmitFunction)}>
         <h3>Login</h3>
         <label htmlFor="email">Email</label>
